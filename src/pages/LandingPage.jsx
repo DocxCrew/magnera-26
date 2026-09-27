@@ -122,7 +122,7 @@ export default function LandingPage() {
         {/* The rock underside of the cliff, hanging from the bottom of the landing over the
             top of the walls. Decorative. */}
         <div className="seam" aria-hidden="true">
-          <img src="assets/rock-ceiling.webp" alt="" width="2000" height="377" decoding="async" draggable="false" />
+          <img src="assets/rock-ceiling.webp" alt="" width="2171" height="503" decoding="async" draggable="false" />
         </div>
 
         {/* ABOUT: two lit stone walls. Desktop shows both; on mobile the section pins

@@ -640,7 +640,7 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
    It takes no space and doesn't move. */
 
 .seam {
-  --w: 100vw;                /* rendered width of the rock art (2000 × 377) */
+  --w: 100vw;                /* rendered width of the rock art (2171 × 503) */
   position: relative;
   z-index: 3;                /* over the top of the walls */
   height: 0;
