@@ -454,18 +454,21 @@ export function initLanding() {
 
   /* ───────── Countdown ───────── */
 
-  const units = Object.fromEntries(
-    [...document.querySelectorAll("#countdown b")].map((b) => [b.dataset.unit, b])
-  );
+  // .countdown, not #countdown: there are now two banners (the corner one on desktop,
+  // the original hanging one on mobile), each with its own set of unit elements, so this
+  // groups ALL of them by unit and tick() below writes every element in each group.
+  const units = { d: [], h: [], m: [], s: [] };
+  document.querySelectorAll(".countdown b").forEach((b) => units[b.dataset.unit]?.push(b));
   function tick() {
     let s = Math.max(0, Math.floor((CONFIG.festDate - Date.now()) / 1000));
     const d = Math.floor(s / 86400); s -= d * 86400;
     const h = Math.floor(s / 3600);  s -= h * 3600;
     const m = Math.floor(s / 60);    s -= m * 60;
-    units.d.textContent = String(d).padStart(3, "0");
-    units.h.textContent = String(h).padStart(2, "0");
-    units.m.textContent = String(m).padStart(2, "0");
-    units.s.textContent = String(s).padStart(2, "0");
+    const write = (arr, v) => arr.forEach((el) => (el.textContent = v));
+    write(units.d, String(d).padStart(3, "0"));
+    write(units.h, String(h).padStart(2, "0"));
+    write(units.m, String(m).padStart(2, "0"));
+    write(units.s, String(s).padStart(2, "0"));
   }
 
   /* ───────── Boot ───────── */

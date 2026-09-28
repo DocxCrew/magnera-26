@@ -37,6 +37,11 @@ export default function LandingPage() {
             </section>
 
             <section className="panel panel--center" data-slide="0" aria-label="Choose a realm">
+              {/* Mobile only, both the rope bridge and this banner: on desktop the bridge
+                  is hidden entirely (nothing connects the islands there any more) and the
+                  banner is replaced by the flag-on-a-pole version mounted top-right, near
+                  the HUD below — same content, new .banner--corner design. See the
+                  desktop/mobile toggle in style.css right where .bridge__svg is declared. */}
               <div className="bridge">
                 <svg className="bridge__svg" id="bridge" viewBox="0 0 400 110" preserveAspectRatio="none" aria-hidden="true"></svg>
                 <button className="bridge__end bridge__end--left" data-go="-1">
@@ -48,7 +53,6 @@ export default function LandingPage() {
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
                 </button>
 
-                {/* royal banner hanging from the middle of the bridge */}
                 <div className="banner" id="hero">
                   <svg className="banner__hanger" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
                     <path d="M50 3 L4 30 M50 3 L96 30" />
@@ -62,7 +66,7 @@ export default function LandingPage() {
                       <h1 className="title">MAGNERA<sup>’26</sup></h1>
                       <div className="collab"><span className="x">×</span><span className="partner">Brototype</span></div>
                       <span className="rule" aria-hidden="true"><i></i></span>
-                      <div className="countdown" id="countdown" aria-live="off">
+                      <div className="countdown" aria-live="off">
                         <div><b data-unit="d">000</b><span>Days</span></div>
                         <div><b data-unit="h">00</b><span>Hours</span></div>
                         <div><b data-unit="m">00</b><span>Minutes</span></div>
@@ -95,6 +99,31 @@ export default function LandingPage() {
 
         {/* LAYER 4 — crimson leaves (asset pending; vignette stands in for now) */}
         <div className="layer layer--leaves" data-depth="0.09" data-scroll="0" data-pan="10" aria-hidden="true"></div>
+
+        {/* Royal banner — desktop: a flag on a pole, top-right, as if mounted on the
+            campus itself. Same cloth/content styling as the bridge banner above (shares
+            its CSS via the .banner__* classes), just a pole instead of a hanging rod, and
+            hidden on mobile, where that original banner is what shows. */}
+        <div className="banner banner--corner">
+          <span className="banner--corner__pole"><span className="banner--corner__finial"></span></span>
+          <div className="banner__cloth">
+            <div className="banner__inner"></div>
+            <div className="banner__content">
+              <p className="banner__presents">Department of Computer Science<em><span>presents</span></em></p>
+              <h1 className="title">MAGNERA<sup>’26</sup></h1>
+              <div className="collab"><span className="x">×</span><span className="partner">Brototype</span></div>
+              <span className="rule" aria-hidden="true"><i></i></span>
+              <div className="countdown" aria-live="off">
+                <div><b data-unit="d">000</b><span>Days</span></div>
+                <div><b data-unit="h">00</b><span>Hours</span></div>
+                <div><b data-unit="m">00</b><span>Minutes</span></div>
+                <div><b data-unit="s">00</b><span>Seconds</span></div>
+              </div>
+            </div>
+            <div className="banner__folds" aria-hidden="true"></div>
+          </div>
+          <span className="banner__tassel" aria-hidden="true"></span>
+        </div>
 
         {/* UI overlay */}
         <div className="hud hud--top">
