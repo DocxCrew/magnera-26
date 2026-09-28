@@ -149,6 +149,13 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
   position: absolute;
   inset: 0;
   transform: translateY(28px) perspective(3200px) rotateY(-24deg) rotateZ(6deg);
+  /* Ground the leaned group into the scene instead of it reading as a flat cutout pasted
+     over the background: a soft cast shadow, offset down and back the way the lean tips
+     the islands away from the camera, so the light in the painted scene appears to be
+     falling on something that's actually floating above it. Static (not written by main.js
+     each frame), so this costs nothing beyond the one-time raster the existing
+     will-change: transform layers already pay for. */
+  filter: drop-shadow(0 55px 60px rgba(5, 3, 12, .55)) drop-shadow(0 18px 22px rgba(5, 3, 12, .35));
 }
 
 /* the whole set (islands, bridge, banner) floats together */
