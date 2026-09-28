@@ -131,10 +131,10 @@ export function initLanding() {
   function buildBridge() {
     const svg = document.getElementById("bridge");
     const NS = "http://www.w3.org/2000/svg";
-    const el = (tag, attrs) => {
+    const el = (tag, attrs, parent = svg) => {
       const n = document.createElementNS(NS, tag);
       for (const k in attrs) n.setAttribute(k, attrs[k]);
-      svg.appendChild(n);
+      parent.appendChild(n);
       return n;
     };
     const f = (n) => n.toFixed(2);
@@ -151,13 +151,18 @@ export function initLanding() {
         <radialGradient id="br-lamp"><stop offset="0" stop-color="#ffc47a" stop-opacity=".5"/><stop offset="1" stop-color="#ff9a4a" stop-opacity="0"/></radialGradient>
         <radialGradient id="br-blue"><stop offset="0" stop-color="#7fd6ff" stop-opacity=".45"/><stop offset="1" stop-color="#3fa9ff" stop-opacity="0"/></radialGradient>
         <radialGradient id="br-pink"><stop offset="0" stop-color="#ff9cc4" stop-opacity=".45"/><stop offset="1" stop-color="#ff3b8a" stop-opacity="0"/></radialGradient>
+        <linearGradient id="br-fade-l" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <linearGradient id="br-fade-r" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff" stop-opacity=".55"/><stop offset=".85" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <mask id="br-mask-l" maskUnits="userSpaceOnUse" x="-500" y="-20" width="544" height="130"><rect x="-500" y="-20" width="544" height="130" fill="url(#br-fade-l)"/></mask>
+        <mask id="br-mask-r" maskUnits="userSpaceOnUse" x="356" y="-20" width="320" height="130"><rect x="356" y="-20" width="320" height="130" fill="url(#br-fade-r)"/></mask>
       </defs>`;
 
     const L = 44, R = 356;
-    const sag = (y0, mid) => (t) => ({
-      x: (1 - t) ** 2 * L + 2 * (1 - t) * t * 200 + t * t * R,
+    const sagBetween = (x0, x1, midX, y0, mid) => (t) => ({
+      x: (1 - t) ** 2 * x0 + 2 * (1 - t) * t * midX + t * t * x1,
       y: (1 - t) ** 2 * y0 + 2 * (1 - t) * t * (2 * mid - y0) + t * t * y0,
     });
+    const sag = (y0, mid) => sagBetween(L, R, 200, y0, mid);
     const deck = sag(44, 70);
     const rail = sag(14, 40);
     const rail2 = sag(29, 56);
@@ -178,17 +183,18 @@ export function initLanding() {
 
     // weathered planks — uneven, a couple missing
     const woods = ["#3d2b1f", "#4a3526", "#35261b", "#523b29"];
-    const planks = (fn, n, gaps = []) => {
+    const planks = (fn, n, gaps = [], parent = svg) => {
       for (let i = 0; i < n; i++) {
         if (gaps.includes(i)) continue;
         const p = fn((i + 0.08) / n), q = fn((i + 0.92) / n), dy = (rnd() - 0.5) * 0.8;
-        el("line", { x1: f(p.x), y1: f(p.y + 2.4 + dy), x2: f(q.x), y2: f(q.y + 2.4 - dy), style: `stroke:${woods[Math.floor(rnd() * 4)]};stroke-width:4.8` });
-        el("line", { x1: f(p.x), y1: f(p.y + dy), x2: f(q.x), y2: f(q.y - dy), style: "stroke:#9a7650;stroke-width:.6;opacity:.55" });
+        el("line", { x1: f(p.x), y1: f(p.y + 2.4 + dy), x2: f(q.x), y2: f(q.y + 2.4 - dy), style: `stroke:${woods[Math.floor(rnd() * 4)]};stroke-width:4.8` }, parent);
+        el("line", { x1: f(p.x), y1: f(p.y + dy), x2: f(q.x), y2: f(q.y - dy), style: "stroke:#9a7650;stroke-width:.6;opacity:.55" }, parent);
       }
     };
     planks(deck, 40, [13, 27]);
-    planks((t) => ({ x: 6 + (L - 6) * t, y: 50 - 6 * t }), 5);
-    planks((t) => ({ x: R + (394 - R) * t, y: 44 + 6 * t }), 5);
+    // (the short ramp stubs that used to sit here, x 6–L and R–394, are now the fuller
+    // fading stub bridges drawn at the end of this function, which cover that same span
+    // and reach much further out)
 
     // dark stringer beam under the planks + rope lashings
     const beam = (t) => { const p = deck(t); return { x: p.x, y: p.y + 5.2 }; };
@@ -238,6 +244,39 @@ export function initLanding() {
       el("path", { d: `M${x - 4.5} 14 q1 6 -.5 12`, style: "fill:none;stroke:#3e5a26;stroke-width:1.2" });
       el("circle", { cx: x, cy: 1, r: 8, style: `fill:url(#${halo})` });
       el("path", { d: `M${x} -4 L${x + 2.6} 1.5 L${x} 7 L${x - 2.6} 1.5 Z`, style: `fill:${crystal};stroke:#2e2a26;stroke-width:.4` });
+    }
+
+    // Stubs trailing off each pillar into the mist, so the two islands read as waypoints
+    // on a longer bridge rather than a pair floating alone. Same construction as the main
+    // span (planks/rail/beam/moss), just shorter, gentler and masked to fade to nothing at
+    // the open end — overflow:visible on .bridge__svg lets this paint past the viewBox
+    // without touching placeBridge()'s math, which only ever measured the L–R span.
+    //
+    // The pillar sits ~20% in from each island's own outer edge (ANCHOR.x=0.8 below is the
+    // *inner*, bridge-facing edge) — the stub has to cross that remaining rock before it's
+    // in open air to fade into, so it needs real length, not just a short cap.
+    for (const s of [
+      { x0: L - 420, x1: L, mask: "br-mask-l" },
+      { x0: R, x1: R + 260, mask: "br-mask-r" },
+    ]) {
+      const g = el("g", { mask: `url(#${s.mask})` });
+      const midX = (s.x0 + s.x1) / 2;
+      const sDeck = sagBetween(s.x0, s.x1, midX, 44, 50);
+      const sRail = sagBetween(s.x0, s.x1, midX, 14, 22);
+      const sBeam = (t) => { const p = sDeck(t); return { x: p.x, y: p.y + 5.2 }; };
+
+      for (let i = 1; i < 12; i++) {
+        const t = i / 12, a = sRail(t), b = sDeck(t), j = (rnd() - 0.5) * 1.2;
+        el("line", { x1: f(a.x), y1: f(a.y), x2: f(b.x + j), y2: f(b.y), style: "stroke:#7a5c3e;stroke-width:.6" }, g);
+      }
+      planks(sDeck, 17, [], g);
+      el("path", { d: path(sBeam), style: rope(1.6, "#2a1d14") }, g);
+      for (const t of [0.15, 0.4, 0.65, 0.85]) {
+        const p = sBeam(t);
+        el("ellipse", { cx: f(p.x), cy: f(p.y), rx: f(1.6 + rnd() * 2), ry: 1.1, style: "fill:#3e5a26" }, g);
+      }
+      el("path", { d: path(sRail), style: rope(2.2) }, g);
+      el("path", { d: path(sRail), style: "fill:none;stroke:#4a3524;stroke-width:.9;stroke-dasharray:1.2 2.4" }, g);
     }
   }
 
