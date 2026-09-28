@@ -148,7 +148,7 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
 .track-tilt {
   position: absolute;
   inset: 0;
-  transform: perspective(3200px) rotateY(-16deg) rotateZ(3deg);
+  transform: translateY(28px) perspective(3200px) rotateY(-24deg) rotateZ(6deg);
 }
 
 /* the whole set (islands, bridge, banner) floats together */
