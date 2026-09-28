@@ -138,6 +138,19 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
 
 /* ═══════════ Layer 2 — islands + bridge + banner ═══════════ */
 
+/* Desktop: the whole set leans in 3D — left side (technical) receding, right side
+   (cultural) coming toward camera, with a small extra roll so the right/near side dips
+   down a touch. A plain wrapper around #track, not #track itself: main.js writes
+   `transform` on #track (mobile slide) and .layer--islands (parallax) every frame, and a
+   perspective()+rotateY() 3D lean needs the full `transform` property (unlike the flat
+   rotate/translate/scale individual properties), so it has to live on an element JS never
+   touches or it would be wiped every frame. Off on mobile: see the media query below. */
+.track-tilt {
+  position: absolute;
+  inset: 0;
+  transform: perspective(3200px) rotateY(-16deg) rotateZ(3deg);
+}
+
 /* the whole set (islands, bridge, banner) floats together */
 .track { position: absolute; inset: 0; animation: bob 8s ease-in-out infinite; }
 
@@ -812,6 +825,8 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
   .layer--cliff img { width: min(130vw, 540px); bottom: -6vh; }
 
   .layer--islands { inset: 0; }
+
+  .track-tilt { transform: none; }   /* desktop-only 3D lean: off for the sliding carousel */
 
   .track {
     right: auto;

@@ -22,6 +22,10 @@ export default function LandingPage() {
             Desktop: two islands placed in the scene.
             Mobile:  a 3-panel track  [Technical] [bridge + hero] [Cultural]  that slides horizontally. */}
         <div className="layer layer--islands" data-depth="0.03" data-scroll="0.3">
+          {/* Desktop-only 3D lean (CSS only, see .track-tilt): plain wrapper that main.js
+              never touches, so its transform is free to use perspective()/rotateY() without
+              fighting the transform main.js writes onto #track and .layer--islands every frame. */}
+          <div className="track-tilt">
           <div className="track" id="track">
 
             <section className="panel panel--tech" data-slide="-1" aria-label="Technical Events">
@@ -80,6 +84,7 @@ export default function LandingPage() {
               </a>
             </section>
 
+          </div>
           </div>
         </div>
 
