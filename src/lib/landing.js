@@ -278,7 +278,16 @@ export function initLanding() {
   // mobile pan is a plain translate — composited, no repaint.
   function sizeBg() {
     const lw = bgLayer.offsetWidth, lh = bgLayer.offsetHeight, ar = 1672 / 941;
-    const w = Math.max(lw, lh * ar), h = w / ar;
+    let w = Math.max(lw, lh * ar), h = w / ar;
+    // "Cover" sizing zooms based on width when the box is proportionally wider than the
+    // art (any desktop screen shorter/wider than ~1.78:1), cropping the excess off the
+    // top and bottom. On a short, wide window that zoom — and the crop — can get severe
+    // enough to cut into the mountains/tower. Cap it: past ~25% vertical crop, stop
+    // zooming to cover and shrink instead, even if that leaves the layer's own (night-
+    // sky-coloured) edges showing at the sides — same shrink the mobile carousel already
+    // gets from the opposite kind of narrow/tall box, just for the other extreme.
+    const maxH = lh * 1.25;
+    if (h > maxH) { h = maxH; w = h * ar; }
     const posX = mobile.matches ? 0.575 : 0.5;   // tower centred on phones
     bgOverflow = w - lw;
     Object.assign(bgImg.style, {
