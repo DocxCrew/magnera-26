@@ -138,14 +138,8 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
 
 /* ═══════════ Layer 2 — islands + bridge + banner ═══════════ */
 
-/* the whole set (islands, bridge, banner) floats together, tilted as one rigid group.
-   `rotate` (not `transform`) on purpose: main.js writes `.transform` on this element's
-   ancestor .layer--islands every frame for parallax, and on `.track` itself for the
-   mobile slide — the independent `rotate` property composes with those instead of
-   fighting them, and placeBridge()'s math (in the pre-rotation layout box) still lines
-   the bridge up with the islands, since the whole group rotates together. Desktop only:
-   cancelled below for the mobile carousel. */
-.track { position: absolute; inset: 0; rotate: 14deg; animation: bob 8s ease-in-out infinite; }
+/* the whole set (islands, bridge, banner) floats together */
+.track { position: absolute; inset: 0; animation: bob 8s ease-in-out infinite; }
 
 .panel { position: absolute; }
 
@@ -822,7 +816,6 @@ svg:not(.bridge__svg) path { fill: none; stroke: currentColor; stroke-width: 1.5
   .track {
     right: auto;
     width: 300vw;
-    rotate: 0deg;            /* desktop-only tilt (see .track above): off for the sliding carousel */
     display: flex;          /* slid by main.js */
     will-change: transform;
   }
